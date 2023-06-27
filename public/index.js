@@ -15,6 +15,15 @@ $(document).ready(()=>{
     }
   });
 
+  $('#new-channel-btn').click( () => {
+    let newChannel = $('#new-channel-input').val();
+    if(newChannel.length > 0){
+      // Emit the new channel to the server
+      socket.emit('new channel', newChannel);
+      $('#new-channel-input').val("");
+    }
+  });
+
   $('#send-chat-btn').click((e) => {
     e.preventDefault();
     let message = $('#chat-input').val();
