@@ -6,9 +6,12 @@ const exphbs  = require('express-handlebars');
 //Socket.io
 const io = require('socket.io')(server);
 let onlineUsers = {};
+
+let channels = {"General" : []}
+
 io.on("connection", (socket) => {
   console.log("🔌 New user connected! 🔌");
-  require('./sockets/chat.js')(io, socket, onlineUsers);
+  require('./sockets/chat.js')(io, socket, onlineUsers, channels);
 })
 
 app.engine('handlebars', exphbs.engine({ extname: '.handlebars', defaultLayout: "index",
