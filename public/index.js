@@ -2,6 +2,9 @@
 $(document).ready(()=>{
   const socket = io.connect();
 
+  let currentUser;
+  socket.emit('get online users');
+
   $('#create-user-btn').click((e)=>{
     e.preventDefault();
     if($('#username-input').val().length > 0){
@@ -12,23 +15,18 @@ $(document).ready(()=>{
     }
   });
 
-  $('#send-chat-btn').click((e)=>{
+  $('#send-chat-btn').click((e) => {
     e.preventDefault();
-    if($('#chat-input').val().length > 0){
-      // Get the message text value
-      let message = $('#chat-input').val();
-      // Emit the message with the socket
-      socket.emit('new message', message);
-      // Append the message to the chat div
-      $('#chat-input').val('');
-      $('.chat-messages').append(`
-        <div class="message">
-          <p class="message-user">${username}: </p>
-          <p class="message-text">${message}</p>
-        </div>
-      `);
+    let message = $('#chat-input').val();
+    if(message.length > 0){
+      // Emit the message with the current user to the server
+      socket.emit('new message', {
+        sender : currentUser,
+        message : message,
+      });
+      $('#chat-input').val("");
     }
-  })
+  });
 
   //socket listeners
   socket.on('new user', (username) => {
@@ -36,5 +34,29 @@ $(document).ready(()=>{
     // Add the new user to the online users div
     $('.users-online').append(`<div class="user-online">${username}</div>`);
   })
+
+  socket.on('new message', (data) => {
+    $('.message-container').append(`
+      <div class="message">
+        <p class="message-user">${data.sender}: </p>
+        <p class="message-text">${data.message}</p>
+      </div>
+    `);
+  })
+
+  socket.on('get online users', (onlineUsers) => {
+    for(username in onlineUsers){
+      $('.users-online').append(`<div class="user-online">${username}</div>`);
+    }
+  })
+
+  //Refresh the online user list
+  socket.on('user has left', (onlineUsers) => {
+    $('.users-online').empty();
+    for(username in onlineUsers){
+      $('.users-online').append(`<p>${username}</p>`);
+    }
+  });
+
 
 })

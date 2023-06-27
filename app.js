@@ -5,9 +5,10 @@ const server = require('http').Server(app);
 const exphbs  = require('express-handlebars');
 //Socket.io
 const io = require('socket.io')(server);
+let onlineUsers = {};
 io.on("connection", (socket) => {
   console.log("🔌 New user connected! 🔌");
-  require('./sockets/chat.js')(io, socket);
+  require('./sockets/chat.js')(io, socket, onlineUsers);
 })
 
 app.engine('handlebars', exphbs.engine({ extname: '.handlebars', defaultLayout: "index",
