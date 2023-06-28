@@ -3,8 +3,10 @@ $(document).ready(()=>{
   const socket = io.connect();
 
   let currentUser;
+  let channels;
   socket.emit('get online users');
   socket.emit('user changed channel', "General");
+  socket.emit('get channels');
 
   $('#create-user-btn').click((e)=>{
     e.preventDefault();
@@ -52,6 +54,15 @@ $(document).ready(()=>{
     // Add the new user to the online users div
     $('.users-online').append(`<div class="user-online">${username}</div>`);
   })
+
+  socket.on('get channels', (channelList) => {
+    channels = Object.keys(channelList);
+    for (const channel in channelList) {
+      if (!channels.includes(channel)) {
+        $('.channels').append(`<div class="channel">${channel}</div>`);
+      }
+    }
+  });
 
   socket.on('new message', (data) => {
     //Only append the message if the user is currently in that channel

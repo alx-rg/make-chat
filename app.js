@@ -10,7 +10,6 @@ let onlineUsers = {};
 let channels = {"General" : []}
 
 io.on("connection", (socket) => {
-  console.log("🔌 New user connected! 🔌");
   require('./sockets/chat.js')(io, socket, onlineUsers, channels);
 })
 

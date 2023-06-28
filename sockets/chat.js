@@ -4,14 +4,12 @@ module.exports = (io, socket, onlineUsers, channels) => {
   socket.on('new user', (username) => {
     onlineUsers[username] = socket.id;
     socket["username"] = username;
-    console.log(`✋ ${username} has joined the chat! ✋`);
     io.emit("new user", username);
   })
 
   //Listen for new messages
   socket.on('new message', (data) => {
     channels[data.channel].push({sender: data.sender, message: data.message});
-    console.log(`🎤 ${data.sender}: ${data.message} 🎤`)
     io.to(data.channel).emit('new message', data);
   })
 
@@ -24,6 +22,10 @@ module.exports = (io, socket, onlineUsers, channels) => {
       messages : channels[newChannel]
     });
   });
+
+  socket.on('get channels', () => {
+    socket.emit('get channels', channels);
+  })
 
   socket.on('user changed channel', (newChannel) => {
     socket.join(newChannel);
