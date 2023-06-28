@@ -25,6 +25,14 @@ module.exports = (io, socket, onlineUsers, channels) => {
     });
   });
 
+  socket.on('user changed channel', (newChannel) => {
+    socket.join(newChannel);
+    socket.emit('user changed channel', {
+      channel : newChannel,
+      messages : channels[newChannel]
+    });
+  });
+
   socket.on('get online users', () => {
     socket.emit('get online users', onlineUsers);
   })
