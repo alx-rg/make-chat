@@ -10,6 +10,7 @@ $(document).ready(()=>{
     e.preventDefault();
     if($('#username-input').val().length > 0){
       socket.emit('new user', $('#username-input').val());
+      currentUser = $('#username-input').val(); // Set currentUser to the entered username
       $('.username-form').remove();
       // Have the main page visible
       $('.main-container').css('display', 'flex');
